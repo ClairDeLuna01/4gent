@@ -1,5 +1,7 @@
 #include <board.hpp>
 #include <string.h>
+#include <algorithm>
+#include "agent.hpp"
 
 token Board::operator()(int x, int y) const
 {
@@ -76,4 +78,29 @@ std::ostream& operator<<(std::ostream& os, const Board& b)
     os << "================\n";
 
     return os;
+}
+
+void Board::getChildren(token color, std::vector<Board> &states, int limit) const 
+{
+    std::vector<Board> children;
+
+    std::vector<int> moves = getLegalMoves();
+    int movesCount = moves.size();
+    for(int i = 0; i < movesCount; i++) {
+
+        Board tmp;
+        memcpy(&tmp, this, sizeof(Board));
+
+        tmp.play(color, moves[i]);
+        if (std::find_if(states.begin(), states.end(), [&](auto elem) {
+            return memcmp(&elem, &tmp, sizeof(Board)) == 0;
+        }) == states.end()) {
+            states.push_back(tmp);
+            if(limit > 0) 
+                tmp.getChildren(color == red ? yellow : red, states, limit-1);
+
+        }
+
+    }
+
 }

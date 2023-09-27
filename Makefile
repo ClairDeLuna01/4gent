@@ -1,5 +1,5 @@
 CC = g++
-CPPFLAGS = -Wall -g
+CPPFLAGS = -Wall -Ofast
 LIBFLAGS = -Iinclude
 LINKFLAGS = 
 INCLUDE = -Iinclude 

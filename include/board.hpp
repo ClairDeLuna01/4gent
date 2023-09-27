@@ -33,6 +33,8 @@ public:
     void clear() const;
 
     XXH128_hash_t getHash() const;
+
+    void getChildren(token, std::vector<Board> &, int limit = 2) const;
 };
 
 std::ostream &operator<<(std::ostream &os, const Board &b);
