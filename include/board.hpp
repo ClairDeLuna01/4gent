@@ -7,12 +7,12 @@ constexpr int BOARD_SIZE_Y = 6;
 #include <vector>
 #include <iostream>
 
-#include "xxhash.h"
+#include "xxh3.h"
 
 enum token : char
 {
     empty,
-    red,
+    red, // red always plays first
     yellow
 };
 

@@ -65,7 +65,7 @@ int main(void) {
 
 	std::cout << "\nlegal moves :";
 	std::vector<int> test = board.getLegalMoves();
-	for(size_t i  = 0; i < test.size(); i++)
+	for (size_t i = 0; i < test.size(); i++)
 		std::cout << test[i] << " ";
 
 	return 0;

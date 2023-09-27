@@ -1,7 +1,7 @@
 CC = g++
 CPPFLAGS = -Wall -g
 LIBFLAGS = -Iinclude
-LINKFLAGS = 
+LINKFLAGS = -L./ 
 INCLUDE = -Iinclude 
 EXEC = 4gent
 DEL_ux = rm -f
