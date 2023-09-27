@@ -7,23 +7,25 @@ typedef int move;
 
 class Agent
 {
-    protected :
-        token color;
+protected:
+    token color;
 
-    public : 
-        Agent(token color);
+public:
+    Agent(token color);
 
-        virtual move getMove(Board board);
+    virtual move getMove(Board board);
 };
 
 class Player : Agent
 {
+public:
+    Player(token color);
 
+    move getMove(Board board);
 };
 
-class InteligentAgent : Agent
+class MiniMaxAgent : Agent
 {
-
 };
 
 #endif
