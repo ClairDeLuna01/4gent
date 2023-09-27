@@ -14,5 +14,5 @@ Projet réalisé pour le cours de POA/SMA du cursus Imagine en Master 1 par:
 
 - Pas de majuscules au début des noms de fichiers.
 - Privilégier le camelCase, et mettre des majuscules au début des noms de classes.
-- FAIRE DES COMMITS DESCRIPTIFS SVP.
+- FAIRE DES COMMITS DESCRIPTIFS ET PROPRES SVP.
 
