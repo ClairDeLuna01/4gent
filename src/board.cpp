@@ -14,14 +14,20 @@ bool Board::play(token color, int x)
         return false;
     }
 
+
+    int y = 0;
     for (int i = BOARD_SIZE_Y - 1; i >= 0; i--)
     {
         if (!i || grid[x][i - 1] != empty)
         {
             grid[x][i] = color;
+            y = i;
             break;
         }
     }
+
+    lastPlayedPos.first = x;
+    lastPlayedPos.second = y;
 
     return true;
 }
@@ -61,63 +67,67 @@ bool iswinning(token t, token& color, int& count)
 
 token Board::checkVictory() const
 {
-    // check y lines 
-    int count = 0;
-    token color = empty;
-    for(int x = 0; x < BOARD_SIZE_X; x++)
-    {
-        count = 0;
-        color = empty;
-        for(int y = 0; y < BOARD_SIZE_Y; y++)
-            if(iswinning(grid[x][y], color, count))
-                return color;
-    }
+    // // check y lines 
+    // int count = 0;
+    // token color = empty;
+    // for(int x = 0; x < BOARD_SIZE_X; x++)
+    // {
+    //     count = 0;
+    //     color = empty;
+    //     for(int y = 0; y < BOARD_SIZE_Y; y++)
+    //         if(iswinning(grid[x][y], color, count))
+    //             return color;
+    // }
 
-    // check x lines
-    for(int y = 0; y < BOARD_SIZE_Y; y++)
-    {
-        count = 0;
-        color = empty;
-        for(int x = 0; x < BOARD_SIZE_X; x++)
-            if(iswinning(grid[x][y], color, count))
-                return color;
-    }
+    // // check x lines
+    // for(int y = 0; y < BOARD_SIZE_Y; y++)
+    // {
+    //     count = 0;
+    //     color = empty;
+    //     for(int x = 0; x < BOARD_SIZE_X; x++)
+    //         if(iswinning(grid[x][y], color, count))
+    //             return color;
+    // }
 
-    // checking diagonal +x -y
-    int count2 = 0;
-    token color2 = empty;
-    for(int y = 3; y < BOARD_SIZE_Y; y++)
-    {
-        count = 0;
-        color = empty;
-        count2 = 0;
-        color2 = empty;
-        int ytmp = y;
-        for(int x = 0; x < BOARD_SIZE_X && y > 0; x++, y--)
-        {
-            if(iswinning(grid[x][y], color, count))
-                return color;
-            if(iswinning(grid[BOARD_SIZE_X-1-x][y], color, count))
-                return color;
-        }
-    }
+    // // checking diagonal +x -y
+    // int count2 = 0;
+    // token color2 = empty;
+    // for(int y = 3; y < BOARD_SIZE_Y; y++)
+    // {
+    //     count = 0;
+    //     color = empty;
+    //     count2 = 0;
+    //     color2 = empty;
+    //     int ytmp = y;
+    //     for(int x = 0; x < BOARD_SIZE_X && ytmp > 0; x++, ytmp--)
+    //     {
+    //         if(iswinning(grid[x][ytmp], color, count))
+    //             return color;
+    //         if(iswinning(grid[BOARD_SIZE_X-1-x][ytmp], color2, count2))
+    //             return color;
+    //     }
+    // }
 
-    // checking diagonal +x +y
-    for(int x = 1; x < 4; x++)
-    {
-        count = 0;
-        color = empty;
-        count2 = 0;
-        color2 = empty;
-        int xtmp = x;
-        for(int y = BOARD_SIZE_Y-1; x < BOARD_SIZE_X && y > 0; x++, y--)
-        {
-            if(iswinning(grid[x][y], color, count))
-                return color;
-            if(iswinning(grid[BOARD_SIZE_X-1-x][y], color, count))
-                return color;
-        }
-    }
+    // // checking diagonal +x +y
+    // for(int x = 1; x < 4; x++)
+    // {
+    //     count = 0;
+    //     color = empty;
+    //     count2 = 0;
+    //     color2 = empty;
+    //     int xtmp = x;
+    //     for(int y = BOARD_SIZE_Y-1; xtmp < BOARD_SIZE_X && y > 0; xtmp++, y--)
+    //     {
+    //         if(iswinning(grid[xtmp][y], color, count))
+    //             return color;
+    //         if(iswinning(grid[BOARD_SIZE_X-1-xtmp][y], color2, count2))
+    //             return color;
+    //     }
+    // }
+
+    // return empty;
+
+    // for(int x = 0; x < )
 
     return empty;
 }

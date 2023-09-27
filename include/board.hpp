@@ -20,6 +20,7 @@ class Board
 {
 private:
     token grid[BOARD_SIZE_X][BOARD_SIZE_Y] = {{empty}};
+    std::pair<int, int> lastPlayedPos;
 
 public:
     token operator()(int x, int y) const;
