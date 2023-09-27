@@ -42,6 +42,86 @@ void Board::clear() const
     memset((char *)grid, 0, BOARD_SIZE_X*BOARD_SIZE_Y);
 }
 
+bool iswinning(token t, token& color, int& count)
+{
+    if(t && t == color)
+    {
+        count ++;
+        if(count == 4)
+            return true;
+    }
+    if(t && t != color)
+    {
+        count = 1;
+        color = t;
+    }
+
+    return false;
+}
+
+token Board::checkVictory() const
+{
+    // check y lines 
+    int count = 0;
+    token color = empty;
+    for(int x = 0; x < BOARD_SIZE_X; x++)
+    {
+        count = 0;
+        color = empty;
+        for(int y = 0; y < BOARD_SIZE_Y; y++)
+            if(iswinning(grid[x][y], color, count))
+                return color;
+    }
+
+    // check x lines
+    for(int y = 0; y < BOARD_SIZE_Y; y++)
+    {
+        count = 0;
+        color = empty;
+        for(int x = 0; x < BOARD_SIZE_X; x++)
+            if(iswinning(grid[x][y], color, count))
+                return color;
+    }
+
+    // checking diagonal +x -y
+    int count2 = 0;
+    token color2 = empty;
+    for(int y = 3; y < BOARD_SIZE_Y; y++)
+    {
+        count = 0;
+        color = empty;
+        count2 = 0;
+        color2 = empty;
+        int ytmp = y;
+        for(int x = 0; x < BOARD_SIZE_X && y > 0; x++, y--)
+        {
+            if(iswinning(grid[x][y], color, count))
+                return color;
+            if(iswinning(grid[BOARD_SIZE_X-1-x][y], color, count))
+                return color;
+        }
+    }
+
+    // checking diagonal +x +y
+    for(int x = 1; x < 4; x++)
+    {
+        count = 0;
+        color = empty;
+        count2 = 0;
+        color2 = empty;
+        int xtmp = x;
+        for(int y = BOARD_SIZE_Y-1; x < BOARD_SIZE_X && y > 0; x++, y--)
+        {
+            if(iswinning(grid[x][y], color, count))
+                return color;
+            if(iswinning(grid[BOARD_SIZE_X-1-x][y], color, count))
+                return color;
+        }
+    }
+
+    return empty;
+}
+
 std::ostream& operator<<(std::ostream& os, const token t)
 {
     char tyellow[] = "\033[93m";
