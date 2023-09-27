@@ -7,12 +7,12 @@ constexpr int BOARD_SIZE_Y = 6;
 #include <vector>
 #include <iostream>
 
-#include "xxhash.h"
+#include "xxh3.h"
 
 enum token : char
 {
     empty,
-    red,
+    red, // red always plays first
     yellow
 };
 
@@ -20,6 +20,7 @@ class Board
 {
 private:
     token grid[BOARD_SIZE_X][BOARD_SIZE_Y] = {{empty}};
+    std::pair<int, int> lastPlayedPos;
 
 public:
     token operator()(int x, int y) const;
