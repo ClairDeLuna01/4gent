@@ -128,7 +128,96 @@ token Board::checkVictory() const
 
     // return empty;
 
-    // for(int x = 0; x < )
+    token color = grid[lastPlayedPos.first][lastPlayedPos.second];
+
+    int count = 0;
+    for(int x = lastPlayedPos.first; x < BOARD_SIZE_X; x ++)
+    {
+        if(grid[x][lastPlayedPos.second] == color)
+            count++;
+        else
+            break;
+    }
+
+    for(int x = lastPlayedPos.first; x >= 0; x --)
+    {
+        if(grid[x][lastPlayedPos.second] == color)
+            count++;
+        else
+            break;
+    }
+    
+    if(count >= 4)
+        return color;
+    count = 0;
+
+    for(int y = lastPlayedPos.second; y < BOARD_SIZE_Y; y ++)
+    {
+        if(grid[lastPlayedPos.first][y] == color)
+            count++;
+        else
+            break;
+    }
+
+    for(int y = lastPlayedPos.second; y >= 0; y --)
+    {
+        if(grid[lastPlayedPos.first][y] == color)
+            count++;
+        else
+            break;
+    }
+
+    if(count >= 4)
+        return color;
+    count = 0;
+
+    int x = lastPlayedPos.first;
+    int y = lastPlayedPos.second;
+    for(;x < BOARD_SIZE_X && y < BOARD_SIZE_Y; x++, y++)
+    {
+        if(grid[x][y] == color)
+            count++;
+        else
+            break;
+    }
+
+    x = lastPlayedPos.first;
+    y = lastPlayedPos.second;
+    for(;x >= 0 && y >= 0; x--, y--)
+    {
+        if(grid[x][y] == color)
+            count++;
+        else
+            break;
+    }
+
+    if(count >= 4)
+        return color;
+    count = 0;
+
+    x = lastPlayedPos.first;
+    y = lastPlayedPos.second;
+    for(;x >= 0 && y < BOARD_SIZE_Y; x--, y++)
+    {
+        if(grid[x][y] == color)
+            count++;
+        else
+            break;
+    }
+
+    x = lastPlayedPos.first;
+    y = lastPlayedPos.second;
+    for(;x < BOARD_SIZE_X && y >= 0; x++, y--)
+    {
+        if(grid[x][y] == color)
+            count++;
+        else
+            break;
+    }
+
+    if(count >= 4)
+        return color;
+    count = 0;
 
     return empty;
 }
