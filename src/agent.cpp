@@ -37,23 +37,23 @@ move Player::getMove(Board board)
     return mv;
 }
 
-std::vector<Board> getStates() {
+std::vector<BoardHashPair> getStates()
+{
 
     Board board;
-    memset(&board, 0, sizeof(Board));
+    board.clear();
 
     /* This variable stores who is currently playing.
      * true     -> player
      * false    -> agent
      * The agent always play in second.
      */
-    bool turn = true;
+    // bool turn = true;
 
-    std::vector<Board> states;
-    states.push_back(board);
+    std::vector<BoardHashPair> states;
+    states.push_back({board, board.getHash()});
 
-    board.getChildren(red, states, 7);
+    board.getChildren(red, states, 0);
 
     return states;
-
 }

@@ -177,7 +177,7 @@ std::ostream &operator<<(std::ostream &os, const Board &b)
     return os;
 }
 
-void Board::getChildren(token color, std::vector<XXH128_hash_t> &states, int limit) const
+void Board::getChildren(token color, std::vector<BoardHashPair> &states, int limit) const
 {
     std::vector<Board> children;
 
@@ -186,23 +186,53 @@ void Board::getChildren(token color, std::vector<XXH128_hash_t> &states, int lim
     for (int i = 0; i < movesCount; i++)
     {
 
-        Board tmp;
-        memcpy(&tmp, this, sizeof(Board));
+        Board tmp(*this);
+        // memcpy(&tmp, this, sizeof(Board));
 
         tmp.play(color, moves[i]);
-        if (std::find_if(states.begin(), states.end(), [&](XXH128_hash_t hash)
-                         { 
-                            XXH128_hash_t hash = tmp.getHash();
-                            return hash.low64 == hash.low64 && hash.high64 == hash.high64; }) == states.end())
+        const BoardHash newHash = tmp.getHash();
+        if (std::find_if(states.begin(), states.end(), [&](BoardHashPair pair)
+                         { return newHash == pair.hash; }) == states.end())
         {
-            states.push_back(tmp.getHash());
+            states.push_back({tmp, newHash});
             if (limit > 0)
                 tmp.getChildren(color == red ? yellow : red, states, limit - 1);
         }
     }
 }
 
-XXH128_hash_t Board::getHash() const
+BoardHash Board::getHash() const
 {
-    return XXH128((char *)grid, BOARD_SIZE_X * BOARD_SIZE_Y, 0);
+    BoardHash hash;
+
+    uint64_t low = 0;
+    uint64_t high = 0;
+
+    constexpr unsigned int empty = 0b00;
+    constexpr unsigned int red = 0b01;
+    constexpr unsigned int yellow = 0b10;
+
+    for (int x = 0; x < BOARD_SIZE_X; x++)
+    {
+        for (int y = 0; y < BOARD_SIZE_Y; y++)
+        {
+            int bit = x * BOARD_SIZE_Y + y;
+            unsigned int color = grid[x][y] == empty ? empty : grid[x][y] == red ? red
+                                                                                 : yellow;
+
+            if (bit < 64)
+            {
+                low |= color << bit;
+            }
+            else
+            {
+                high |= color << (bit - 64);
+            }
+        }
+    }
+
+    hash.low = low;
+    hash.high = high;
+
+    return hash;
 }

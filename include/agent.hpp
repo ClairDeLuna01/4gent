@@ -30,9 +30,8 @@ public:
     MiniMaxAgent(token color);
 
     move getMove(Board board);
-
 };
 
-std::vector<Board> getStates();
+std::vector<BoardHashPair> getStates();
 
 #endif

@@ -2,7 +2,8 @@
 #include "board.hpp"
 #include "agent.hpp"
 
-void playHorizontal(Board& board) {
+void playHorizontal(Board &board)
+{
 	board.play(yellow, 0);
 	board.play(red, 4);
 	board.play(yellow, 1);
@@ -12,7 +13,8 @@ void playHorizontal(Board& board) {
 	board.play(yellow, 3);
 }
 
-void playVertical(Board& board) {
+void playVertical(Board &board)
+{
 	board.play(yellow, 0);
 	board.play(red, 1);
 	board.play(yellow, 0);
@@ -22,7 +24,8 @@ void playVertical(Board& board) {
 	board.play(yellow, 0);
 }
 
-void playDiagonalBL2TR(Board& board) {
+void playDiagonalBL2TR(Board &board)
+{
 	board.play(yellow, 0);
 	board.play(red, 1);
 	board.play(yellow, 1);
@@ -36,7 +39,8 @@ void playDiagonalBL2TR(Board& board) {
 	board.play(yellow, 3);
 }
 
-void playDiagonalBR2TL(Board& board) {
+void playDiagonalBR2TL(Board &board)
+{
 	board.play(yellow, 4);
 	board.play(red, 3);
 	board.play(yellow, 3);
@@ -50,8 +54,9 @@ void playDiagonalBR2TL(Board& board) {
 	board.play(yellow, 1);
 }
 
-int main(void) {
-    // Board board;
+int main(void)
+{
+	// Board board;
 	// board.play(red, 1);
 	// board.play(red, 1);
 	// board.play(red, 1);
@@ -68,11 +73,11 @@ int main(void) {
 	// for(size_t i  = 0; i < test.size(); i++)
 	// 	std::cout << test[i] << " ";
 
-    std::vector<Board> states = getStates();
-    // for(int i = 0; i < states.size(); i++) {
-    //     std::cout << states[i];
-    // }
-    std::cout << "Number of states: " << states.size() << std::endl;
+	std::vector<BoardHashPair> states = getStates();
+	// for(int i = 0; i < states.size(); i++) {
+	//     std::cout << states[i];
+	// }
+	std::cout << "Number of states: " << states.size() << std::endl;
 
 	// playHorizontal(board);
 	// std::cout << board;

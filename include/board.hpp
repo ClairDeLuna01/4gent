@@ -7,13 +7,29 @@ constexpr int BOARD_SIZE_Y = 6;
 #include <vector>
 #include <iostream>
 
-#include "xxh3.h"
+struct BoardHashPair;
 
 enum token : char
 {
     empty,
     red, // red always plays first
     yellow
+};
+
+struct BoardHash
+{
+    uint64_t low;
+    uint64_t high;
+
+    bool operator==(const BoardHash &other) const
+    {
+        return low == other.low && high == other.high;
+    }
+
+    bool operator!=(const BoardHash &other) const
+    {
+        return !(*this == other);
+    }
 };
 
 class Board
@@ -33,10 +49,20 @@ public:
 
     void clear() const;
 
-    XXH128_hash_t getHash() const;
+    // XXH128_hash_t getHash() const;
 
-    void getChildren(token, std::vector<XXH128_hash_t> &, int limit = 2) const;
+    BoardHash getHash() const;
+
+    void getChildren(token, std::vector<BoardHashPair> &, int limit = 2) const;
 };
+
+struct BoardHashPair
+{
+    Board board;
+    BoardHash hash;
+};
+
+const int i = sizeof(BoardHashPair);
 
 std::ostream &operator<<(std::ostream &os, const Board &b);
 
