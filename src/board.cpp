@@ -199,71 +199,394 @@ BoardHash Board::getHash() const
     return hash;
 }
 
-#define VICTORY_NEXT_TURN INFINITY
-#define THREAT_HORIZONTAL 1000
-#define THREAT_VERTICAL 2000
-#define CENTRALITY_HIGH 100
-#define CENTRALITY_LOW 0
-
 bool Board::check3Vertical(int x, int y, token color) const
 {
     return grid[x][y + 1] == color && grid[x][y + 2] == color && grid[x][y + 3] == empty;
 }
-bool Board::check3DiagonalPositive(int x, int y, token color) const
-{
-    return grid[x + 1][y + 1] == color && grid[x + 2][y + 2] == color && grid[x + 3][y + 3] == empty && (x == 0 || grid[x + 3][y + 4] != empty);
-}
-bool Board::check3DiagonalNegative(int x, int y, token color) const
-{
-    return grid[x - 1][y + 1] == color && grid[x - 2][y + 2] == color && grid[x - 3][y + 3] == empty && (x == 0 || grid[x - 3][y + 4] != empty);
-}
 
-bool Board::check3HorizontalPositive(int x, int y, token color) const
+int Board::check3HorizontalPositive(int x, int y, token color) const
 {
     int count = 0;
     int countValidEmpty = 0;
 
+    bool countIndices[5] = {false, true, false, false, false};
+
+    if (x > 0)
+    {
+        if (grid[x - 1][y] == color)
+        {
+            count++;
+            countIndices[0] = true;
+        }
+        else if (grid[x - 1][y] == empty && (x == 0 || grid[x - 1][y - 1] != empty))
+            countValidEmpty++;
+    }
+
     if (grid[x + 1][y] == color)
+    {
         count++;
+        countIndices[1] = true;
+    }
     else if (grid[x + 1][y] == empty && (x == 0 || grid[x + 1][y - 1] != empty))
         countValidEmpty++;
 
     if (grid[x + 2][y] == color)
+    {
         count++;
+        countIndices[2] = true;
+    }
     else if (grid[x + 2][y] == empty && (x == 0 || grid[x + 2][y - 1] != empty))
         countValidEmpty++;
 
     if (grid[x + 3][y] == color)
+    {
         count++;
+        countIndices[3] = true;
+    }
     else if (grid[x + 3][y] == empty && (x == 0 || grid[x + 3][y - 1] != empty))
         countValidEmpty++;
 
-    return count == 2 && countValidEmpty == 1;
+    if (countValidEmpty == 2 && count == 3 && countIndices[1] && countIndices[2] && countIndices[3])
+    {
+        return 3;
+    }
+
+    return (count == 3) + (countValidEmpty >= 1);
 }
 
-bool Board::check3HorizontalNegative(int x, int y, token color) const
+int Board::check3HorizontalNegative(int x, int y, token color) const
 {
     int count = 0;
     int countValidEmpty = 0;
 
+    bool countIndices[5] = {false, true, false, false, false};
+
+    if (x < BOARD_SIZE_Y - 1)
+    {
+        if (grid[x + 1][y] == color)
+        {
+            count++;
+            countIndices[0] = true;
+        }
+        else if (grid[x + 1][y] == empty && (x == 0 || grid[x + 1][y - 1] != empty))
+            countValidEmpty++;
+    }
+
     if (grid[x - 1][y] == color)
+    {
         count++;
+        countIndices[1] = true;
+    }
     else if (grid[x - 1][y] == empty && (x == 0 || grid[x - 1][y - 1] != empty))
         countValidEmpty++;
 
     if (grid[x - 2][y] == color)
+    {
         count++;
+        countIndices[2] = true;
+    }
     else if (grid[x - 2][y] == empty && (x == 0 || grid[x - 2][y - 1] != empty))
         countValidEmpty++;
 
     if (grid[x - 3][y] == color)
+    {
         count++;
+        countIndices[3] = true;
+    }
     else if (grid[x - 3][y] == empty && (x == 0 || grid[x - 3][y - 1] != empty))
         countValidEmpty++;
 
-    return count == 2 && countValidEmpty == 1;
+    if (countValidEmpty == 2 && count == 3 && countIndices[1] && countIndices[2] && countIndices[3])
+    {
+        return 3;
+    }
+
+    return (count == 3) + (countValidEmpty >= 1);
 }
 
+int Board::check3DiagonalPositive(int x, int y, token color) const
+{
+    int count = 0;
+    int countValidEmpty = 0;
+
+    bool countIndices[5] = {false, true, false, false, false};
+
+    if (x > 0 && y > 0)
+    {
+        if (grid[x - 1][y - 1] == color)
+        {
+            count++;
+            countIndices[0] = true;
+        }
+        else if (grid[x - 1][y - 1] == empty && (x == 0 || grid[x - 1][y - 2] != empty))
+            countValidEmpty++;
+    }
+
+    if (grid[x + 1][y + 1] == color)
+    {
+        count++;
+        countIndices[1] = true;
+    }
+    else if (grid[x + 1][y + 1] == empty && (x == 0 || grid[x + 1][y] != empty))
+        countValidEmpty++;
+
+    if (grid[x + 2][y + 2] == color)
+    {
+        count++;
+        countIndices[2] = true;
+    }
+    else if (grid[x + 2][y + 2] == empty && (x == 0 || grid[x + 2][y + 1] != empty))
+        countValidEmpty++;
+
+    if (grid[x + 3][y + 3] == color)
+    {
+        count++;
+        countIndices[3] = true;
+    }
+    else if (grid[x + 3][y + 3] == empty && (x == 0 || grid[x + 3][y + 2] != empty))
+        countValidEmpty++;
+
+    if (countValidEmpty == 2 && count == 3 && countIndices[1] && countIndices[2] && countIndices[3])
+    {
+        return 3;
+    }
+
+    return (count == 3) + (countValidEmpty >= 1);
+}
+
+int Board::check3DiagonalNegative(int x, int y, token color) const
+{
+    int count = 0;
+    int countValidEmpty = 0;
+
+    bool countIndices[5] = {false, true, false, false, false};
+
+    if (x < BOARD_SIZE_X - 1 && y > 0)
+    {
+        if (grid[x + 1][y - 1] == color)
+        {
+            count++;
+            countIndices[0] = true;
+        }
+        else if (grid[x + 1][y - 1] == empty && (x == 0 || grid[x + 1][y - 2] != empty))
+            countValidEmpty++;
+    }
+
+    if (grid[x - 1][y + 1] == color)
+    {
+        count++;
+        countIndices[1] = true;
+    }
+    else if (grid[x - 1][y + 1] == empty && (x == 0 || grid[x - 1][y] != empty))
+        countValidEmpty++;
+
+    if (grid[x - 2][y + 2] == color)
+    {
+        count++;
+        countIndices[2] = true;
+    }
+    else if (grid[x - 2][y + 2] == empty && (x == 0 || grid[x - 2][y + 1] != empty))
+        countValidEmpty++;
+
+    if (grid[x - 3][y + 3] == color)
+    {
+        count++;
+        countIndices[3] = true;
+    }
+    else if (grid[x - 3][y + 3] == empty && (x == 0 || grid[x - 3][y + 2] != empty))
+        countValidEmpty++;
+
+    if (countValidEmpty == 2 && count == 2 && countIndices[1] && countIndices[2] && countIndices[3])
+    {
+        return 3;
+    }
+
+    return (count == 2) + (countValidEmpty >= 1);
+}
+
+bool Board::check2Vertical(int x, int y, token color) const
+{
+    return grid[x][y + 1] == color && grid[x][y + 2] == empty;
+}
+
+int Board::check2HorizontalPositive(int x, int y, token color) const
+{
+    int count = 0;
+    int countActualEmpty = 0;
+
+    bool countIndices[4] = {false, true, false, false};
+
+    if (x > 0)
+    {
+        if (grid[x - 1][y] == color)
+        {
+            count++;
+            countIndices[0] = true;
+        }
+        else if (grid[x - 1][y] == empty)
+            countActualEmpty++;
+    }
+
+    if (grid[x + 1][y] == color)
+    {
+        count++;
+        countIndices[1] = true;
+    }
+    else if (grid[x + 1][y] == empty)
+        countActualEmpty++;
+
+    if (grid[x + 2][y] == color)
+    {
+        count++;
+        countIndices[2] = true;
+    }
+    else if (grid[x + 2][y] == empty)
+        countActualEmpty++;
+
+    if (countActualEmpty == 2 && count == 1 && countIndices[1] && countIndices[2])
+    {
+        return 2;
+    }
+
+    return count == 1 && countActualEmpty >= 2;
+}
+
+int Board::check2HorizontalNegative(int x, int y, token color) const
+{
+    int count = 0;
+    int countActualEmpty = 0;
+
+    bool countIndices[4] = {false, true, false, false};
+
+    if (x < BOARD_SIZE_X - 1)
+    {
+        if (grid[x + 1][y] == color)
+        {
+            count++;
+            countIndices[0] = true;
+        }
+        else if (grid[x + 1][y] == empty)
+            countActualEmpty++;
+    }
+
+    if (grid[x - 1][y] == color)
+    {
+        count++;
+        countIndices[1] = true;
+    }
+    else if (grid[x - 1][y] == empty)
+        countActualEmpty++;
+
+    if (grid[x - 2][y] == color)
+    {
+        count++;
+        countIndices[2] = true;
+    }
+    else if (grid[x - 2][y] == empty)
+        countActualEmpty++;
+
+    if (countActualEmpty == 2 && count == 1 && countIndices[1] && countIndices[2])
+    {
+        return 2;
+    }
+
+    return count == 1 && countActualEmpty >= 2;
+}
+
+int Board::check2DiagonalPositive(int x, int y, token color) const
+{
+    int count = 0;
+    int countActualEmpty = 0;
+
+    bool countIndices[4] = {false, true, false, false};
+
+    if (x > 0 && y > 0)
+    {
+        if (grid[x - 1][y - 1] == color)
+        {
+            count++;
+            countIndices[0] = true;
+        }
+        else if (grid[x - 1][y - 1] == empty)
+            countActualEmpty++;
+    }
+
+    if (grid[x + 1][y + 1] == color)
+    {
+        count++;
+        countIndices[1] = true;
+    }
+    else if (grid[x + 1][y + 1] == empty)
+        countActualEmpty++;
+
+    if (grid[x + 2][y + 2] == color)
+    {
+        count++;
+        countIndices[2] = true;
+    }
+    else if (grid[x + 2][y + 2] == empty)
+        countActualEmpty++;
+
+    if (countActualEmpty == 2 && count == 1 && countIndices[1] && countIndices[2])
+    {
+        return 2;
+    }
+
+    return count == 1 && countActualEmpty >= 2;
+}
+
+int Board::check2DiagonalNegative(int x, int y, token color) const
+{
+    int count = 0;
+    int countActualEmpty = 0;
+
+    bool countIndices[4] = {false, true, false, false};
+
+    if (x < BOARD_SIZE_X - 1 && y > 0)
+    {
+        if (grid[x + 1][y - 1] == color)
+        {
+            count++;
+            countIndices[0] = true;
+        }
+        else if (grid[x + 1][y - 1] == empty)
+            countActualEmpty++;
+    }
+
+    if (grid[x - 1][y + 1] == color)
+    {
+        count++;
+        countIndices[1] = true;
+    }
+    else if (grid[x - 1][y + 1] == empty)
+        countActualEmpty++;
+
+    if (grid[x - 2][y + 2] == color)
+    {
+        count++;
+        countIndices[2] = true;
+    }
+    else if (grid[x - 2][y + 2] == empty)
+        countActualEmpty++;
+
+    if (countActualEmpty == 2 && count == 1 && countIndices[1] && countIndices[2])
+    {
+        return 2;
+    }
+
+    return count == 1 && countActualEmpty >= 2;
+}
+
+#define VICTORY INFINITY
+#define THREAT3_HORIZONTAL 1000
+#define THREAT3_HORIZONTAL_BIG 100000
+#define THREAT3_HORIZONTAL_SMALL 500
+#define THREAT3_VERTICAL 2000
+#define THREAT2_HORIZONTAL 1000
+#define THREAT2_HORIZONTAL_BIG 1500
+#define THREAT2_VERTICAL 200
+#define CENTRALITY_HIGH 100
+#define CENTRALITY_LOW 0
 float Board::evaluate(token color, evaluateResults &rslt) const
 {
     float score = 0;
@@ -277,34 +600,36 @@ float Board::evaluate(token color, evaluateResults &rslt) const
                 int myColor = (grid[x][y] == color ? 1 : -1);
                 token tileColor = grid[x][y];
                 // horizontal threat
-                if (x < BOARD_SIZE_X - 3 && check3HorizontalPositive(x, y, tileColor))
+                if (x < BOARD_SIZE_X - 3)
                 {
-                    score += VICTORY_NEXT_TURN * myColor;
+                    int test = check3HorizontalPositive(x, y, tileColor);
+                    // if (test == ) // TODO: keep going here
+                    score += THREAT3_HORIZONTAL * myColor;
                     rslt.threatHorizontal++;
                 }
                 if (x > 2 && check3HorizontalNegative(x, y, tileColor))
                 {
-                    score += VICTORY_NEXT_TURN * myColor;
+                    score += THREAT3_HORIZONTAL * myColor;
                     rslt.threatHorizontal++;
                 }
 
                 // vertical threat
                 if (y < BOARD_SIZE_Y - 3 && check3Vertical(x, y, tileColor))
                 {
-                    score += VICTORY_NEXT_TURN * myColor;
+                    score += THREAT3_VERTICAL * myColor;
                     rslt.threatVertical++;
                 }
 
                 // diagonal threat
                 if (x < BOARD_SIZE_X - 3 && y < BOARD_SIZE_Y - 3 && check3DiagonalPositive(x, y, tileColor))
                 {
-                    score += VICTORY_NEXT_TURN * myColor;
+                    score += THREAT3_HORIZONTAL * myColor;
                     rslt.threatDiagonal++;
                 }
 
                 if (x > 2 && y < BOARD_SIZE_Y - 3 && check3DiagonalNegative(x, y, tileColor))
                 {
-                    score += VICTORY_NEXT_TURN * myColor;
+                    score += THREAT3_HORIZONTAL * myColor;
                     rslt.threatDiagonal++;
                 }
 
@@ -316,7 +641,7 @@ float Board::evaluate(token color, evaluateResults &rslt) const
                     // horizontal threat
                     if (grid[x + 1][y] == tileColor && grid[x + 2][y] == empty && grid[x - 1][y] == empty)
                     {
-                        score += THREAT_HORIZONTAL * myColor;
+                        score += THREAT2_HORIZONTAL * myColor;
                         rslt.threat2Horizontal++;
                     }
                 }

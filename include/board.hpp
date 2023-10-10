@@ -84,17 +84,28 @@ public:
     float evaluate(token color, evaluateResults &rslt) const;
 
     // functions to check for 3 sized threats, used in evaluate, no erroneous input checking
-    bool check3HorizontalPositive(int x, int y, token color) const;
-    bool check3HorizontalNegative(int x, int y, token color) const;
-    bool check3Vertical(int x, int y, token color) const;
-    bool check3DiagonalPositive(int x, int y, token color) const;
-    bool check3DiagonalNegative(int x, int y, token color) const;
 
-    // functions to check for 2 sized threats, used in evaluate, no erroneous input checking
-    // returns the number of sides that are free, zero if no threat
+    // returns 0 if there is no threat, 1 if there is a threat but not immediate (empty slot but no valid emplacement), 2 if there is a threat and immediate
+    // 3 if there is a row of 3 surrounded by empty slots (victory next turn)
+    int check3HorizontalPositive(int x, int y, token color) const;
+    int check3HorizontalNegative(int x, int y, token color) const;
+
+    // returns true if there is a threat, false otherwise
+    bool check3Vertical(int x, int y, token color) const;
+
+    // returns 0 if there is no threat, 1 if there is a threat but not immediate (empty slot but no valid emplacement), 2 if there is a threat and immediate
+    // 3 if there is a row of 3 surrounded by empty slots (victory next turn)
+    int check3DiagonalPositive(int x, int y, token color) const;
+    int check3DiagonalNegative(int x, int y, token color) const;
+
+    // returns true if there is a column of 2 filled slots and an empty slot above.
+    bool check2Vertical(int x, int y, token color) const;
+
+    // returns 0 if there is no threat,
+    // 1 if there are two filled slots and two empty slots,
+    // 2 if there is two consecutive empty slots and two filled slots
     int check2HorizontalPositive(int x, int y, token color) const;
     int check2HorizontalNegative(int x, int y, token color) const;
-    int check2Vertical(int x, int y, token color) const;
     int check2DiagonalPositive(int x, int y, token color) const;
     int check2DiagonalNegative(int x, int y, token color) const;
 };
