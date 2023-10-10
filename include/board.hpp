@@ -1,14 +1,18 @@
 #ifndef BOARD_HPP
 #define BOARD_HPP
 
-constexpr int BOARD_SIZE_X = 7;
-constexpr int BOARD_SIZE_Y = 6;
-
 #include <vector>
 #include <iostream>
 
+/// @brief The width of the board
+constexpr int BOARD_SIZE_X = 7;
+
+/// @brief The height of the board
+constexpr int BOARD_SIZE_Y = 6;
+
 struct BoardHashPair;
 
+/// @brief The token enumeration determines the player by whom a specific spot on the board was taken
 enum token : char
 {
     empty,
@@ -16,6 +20,7 @@ enum token : char
     yellow
 };
 
+/// @brief Stores a hash of the board
 struct BoardHash
 {
     uint64_t low;
@@ -32,6 +37,7 @@ struct BoardHash
     }
 };
 
+/// @brief Results evaluation data structure
 struct evaluateResults
 {
     int victoryNextTurn = 0;
@@ -52,31 +58,51 @@ struct evaluateResults
         return os;
     }
 
+    /// @brief Write the evaluation results to the standard output
     friend std::ostream &operator<<(std::ostream &os, const evaluateResults &rslt)
     {
         return rslt.operator<<(os);
     }
 };
 
+/// @brief The Board class hosts most of the logic of the game
 class Board
 {
 private:
+    /// @brief The grid defining the board
     token grid[BOARD_SIZE_X][BOARD_SIZE_Y] = {{empty}};
+
+    /// @brief The last played position by either the intelligent agent or the human player
     std::pair<int, int> lastPlayedPos;
 
 public:
+    /// @brief Returns the token on the board at position (x, y) on the board
+    /// @param x The x position of the token, between 0 and `BOARD_SIZE_X - 1`
+    /// @param y The y position of the token, between 0 and `BOARD_SIZE_Y - 1`
+    /// @return The token at position (x, y)
     token operator()(int x, int y) const;
 
+    /// @brief Returns all legal moves on the board
+    /// @return A vector containing all possible moves from an agent
     const std::vector<int> getLegalMoves() const;
 
+    /// @brief Adds a token to a column
+    /// @param color The agent's token color
+    /// @param x The column in which to insert the token
+    /// @return `true` is the token was successfully inserted, `false` otherwise
     bool play(token color, int x);
 
+    /// @brief Checks if a victory occurred on the board by one of the playing agents
+    /// @return The color of the winning tokens, or the `empty` token
     token checkVictory() const;
 
+    /// @brief Clears the entire board
     void clear() const;
 
     // XXH128_hash_t getHash() const;
 
+    /// @brief Returns a hash of the board
+    /// @return A hash of the board
     BoardHash getHash() const;
 
     void getChildren(token, std::vector<BoardHashPair> &, int limit = 2) const;
@@ -105,6 +131,7 @@ struct BoardHashPair
     BoardHash hash;
 };
 
+/// @brief Write the board to the standard output
 std::ostream &operator<<(std::ostream &os, const Board &b);
 
 #endif
