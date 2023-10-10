@@ -1,5 +1,6 @@
 #include <iostream>
-#include <board.hpp>
+#include "board.hpp"
+#include "agent.hpp"
 
 void playHorizontal(Board& board) {
 	board.play(yellow, 0);
@@ -50,37 +51,48 @@ void playDiagonalBR2TL(Board& board) {
 }
 
 int main(void) {
-	Board board;
-	/*board.play(red, 1);
-	board.play(red, 1);
-	board.play(red, 1);
-	board.play(red, 1);
-	board.play(red, 1);
-	board.play(red, 1);
-	board.play(red, 1);
-	board.play(red, 6);
-	board.play(yellow, 2);*/
+    // Board board;
+	// board.play(red, 1);
+	// board.play(red, 1);
+	// board.play(red, 1);
+	// board.play(red, 1);
+	// board.play(red, 1);
+	// board.play(red, 1);
+	// board.play(red, 1);
+	// board.play(red, 6);
+	// board.play(yellow, 2);
 	// playDiagonalBL2TR(board);
 
-	playHorizontal(board);
-	std::cout << board;
-	std::cout << "winner : " << (int)board.checkVictory() << "\n";
-	board.clear();
+	// std::cout << "\nlegal moves :";
+	// std::vector<int> test = board.getLegalMoves();
+	// for(size_t i  = 0; i < test.size(); i++)
+	// 	std::cout << test[i] << " ";
 
-	playVertical(board);
-	std::cout << board;
-	std::cout << "winner : " << (int)board.checkVictory() << "\n";
-	board.clear();
+    std::vector<Board> states = getStates();
+    // for(int i = 0; i < states.size(); i++) {
+    //     std::cout << states[i];
+    // }
+    std::cout << "Number of states: " << states.size() << std::endl;
 
-	playDiagonalBL2TR(board);
-	std::cout << board;
-	std::cout << "winner : " << (int)board.checkVictory() << "\n";
-	board.clear();
+	// playHorizontal(board);
+	// std::cout << board;
+	// std::cout << "winner : " << (int)board.checkVictory() << "\n";
+	// board.clear();
 
-	playDiagonalBR2TL(board);
-	std::cout << board;
-	std::cout << "winner : " << (int)board.checkVictory() << "\n";
-	board.clear();
+	// playVertical(board);
+	// std::cout << board;
+	// std::cout << "winner : " << (int)board.checkVictory() << "\n";
+	// board.clear();
+
+	// playDiagonalBL2TR(board);
+	// std::cout << board;
+	// std::cout << "winner : " << (int)board.checkVictory() << "\n";
+	// board.clear();
+
+	// playDiagonalBR2TL(board);
+	// std::cout << board;
+	// std::cout << "winner : " << (int)board.checkVictory() << "\n";
+	// board.clear();
 
 	return 0;
 }

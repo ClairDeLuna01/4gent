@@ -1,6 +1,8 @@
 #include <iostream>
 #include <algorithm>
+#include "board.hpp"
 #include "agent.hpp"
+#include <string.h>
 
 Agent::Agent(token color)
 {
@@ -33,4 +35,25 @@ move Player::getMove(Board board)
     }
 
     return mv;
+}
+
+std::vector<Board> getStates() {
+
+    Board board;
+    memset(&board, 0, sizeof(Board));
+
+    /* This variable stores who is currently playing.
+     * true     -> player
+     * false    -> agent
+     * The agent always play in second.
+     */
+    bool turn = true;
+
+    std::vector<Board> states;
+    states.push_back(board);
+
+    board.getChildren(red, states, 7);
+
+    return states;
+
 }

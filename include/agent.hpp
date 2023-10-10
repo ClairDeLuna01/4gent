@@ -26,6 +26,13 @@ public:
 
 class MiniMaxAgent : Agent
 {
+public:
+    MiniMaxAgent(token color);
+
+    move getMove(Board board);
+
 };
+
+std::vector<Board> getStates();
 
 #endif

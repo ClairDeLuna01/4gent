@@ -1,5 +1,5 @@
 CC = g++
-CPPFLAGS = -Wall -g
+CPPFLAGS = -Wall -Ofast
 LIBFLAGS = -Iinclude
 LINKFLAGS = -L./ 
 INCLUDE = -Iinclude 
@@ -44,7 +44,7 @@ cleanwin :
 	$(DEL_win) $(EXEC) obj\*.o
 
 clean : 
-	$(DEL_ux) $(EXEC) obj\*.o
+	$(DEL_ux) $(EXEC) obj/*.o
 
 countlines :
 	find ./ -type f \( -iname \*.cpp -o -iname \*.hpp -o -iname \*.frag -o -iname \*.vert -o -iname \*.geom \) | sed 's/.*/"&"/' | xargs  wc -l

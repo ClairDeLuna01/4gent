@@ -1,5 +1,7 @@
 #include <board.hpp>
 #include <string.h>
+#include <algorithm>
+#include "agent.hpp"
 
 token Board::operator()(int x, int y) const
 {
@@ -13,7 +15,6 @@ bool Board::play(token color, int x)
         std::cout << "illegal move :(\n";
         return false;
     }
-
 
     int y = 0;
     for (int i = BOARD_SIZE_Y - 1; i >= 0; i--)
@@ -48,15 +49,15 @@ void Board::clear() const
     memset((char *)grid, 0, BOARD_SIZE_X * BOARD_SIZE_Y);
 }
 
-bool iswinning(token t, token& color, int& count)
+bool iswinning(token t, token &color, int &count)
 {
-    if(t && t == color)
+    if (t && t == color)
     {
-        count ++;
-        if(count == 4)
+        count++;
+        if (count == 4)
             return true;
     }
-    if(t && t != color)
+    if (t && t != color)
     {
         count = 1;
         color = t;
@@ -67,7 +68,7 @@ bool iswinning(token t, token& color, int& count)
 
 token Board::checkVictory() const
 {
-    // // check y lines 
+    // // check y lines
     // int count = 0;
     // token color = empty;
     // for(int x = 0; x < BOARD_SIZE_X; x++)
@@ -221,7 +222,7 @@ token Board::checkVictory() const
     return empty;
 }
 
-std::ostream& operator<<(std::ostream& os, const token t)
+std::ostream &operator<<(std::ostream &os, const token t)
 {
     char tyellow[] = "\033[93m";
     char tred[] = "\033[31m";
@@ -263,6 +264,31 @@ std::ostream &operator<<(std::ostream &os, const Board &b)
     os << "================\n";
 
     return os;
+}
+
+void Board::getChildren(token color, std::vector<XXH128_hash_t> &states, int limit) const
+{
+    std::vector<Board> children;
+
+    std::vector<int> moves = getLegalMoves();
+    int movesCount = moves.size();
+    for (int i = 0; i < movesCount; i++)
+    {
+
+        Board tmp;
+        memcpy(&tmp, this, sizeof(Board));
+
+        tmp.play(color, moves[i]);
+        if (std::find_if(states.begin(), states.end(), [&](XXH128_hash_t hash)
+                         { 
+                            XXH128_hash_t hash = tmp.getHash();
+                            return hash.low64 == hash.low64 && hash.high64 == hash.high64; }) == states.end())
+        {
+            states.push_back(tmp.getHash());
+            if (limit > 0)
+                tmp.getChildren(color == red ? yellow : red, states, limit - 1);
+        }
+    }
 }
 
 XXH128_hash_t Board::getHash() const
