@@ -84,9 +84,13 @@ token Board::checkVictory() const
     if (y >= 3 && grid[x][y] == grid[x][y - 1] && grid[x][y] == grid[x][y - 2] && grid[x][y] == grid[x][y - 3])
         return lastPlayedToken;
 
+    // Diagonal checking
+    const int nX = BOARD_SIZE_X - x - 1;
+    const int nY = BOARD_SIZE_Y - y - 1;
+
     // Checks diagonally (/)
     bMin = std::max(-3, -std::min(x, y));
-    bMax = std::min(0, std::min(BOARD_SIZE_X - x - 1, BOARD_SIZE_Y - y - 1));
+    bMax = std::min(0, std::min(nX, nY));
     for (int i = bMin; i <= bMax; ++i) {
         const token startToken = grid[x + i][y + i];
         if (startToken == grid[x + i + 1][y + i + 1] && startToken == grid[x + i + 2][y + i + 2] && startToken == grid[x + i + 3][y + i + 3])
@@ -94,8 +98,8 @@ token Board::checkVictory() const
     }
 
     // Checks diagonally (\)
-    bMin = std::max(-3, -std::min(x, BOARD_SIZE_Y - y - 1));
-    bMax = std::min(0, std::min(BOARD_SIZE_X - x - 1, y));
+    bMin = std::max(-3, -std::min(x, nY));
+    bMax = std::min(0, std::min(nX, y));
     for (int i = bMin; i <= bMax; ++i) {
         const token startToken = grid[x + i][y - i];
         if (startToken == grid[x + i + 1][y - i - 1] && startToken == grid[x + i + 2][y - i - 2] && startToken == grid[x + i + 3][y - i - 3])

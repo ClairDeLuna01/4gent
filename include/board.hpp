@@ -92,7 +92,7 @@ public:
     /// @return `true` is the token was successfully inserted, `false` otherwise
     bool play(token color, int x);
 
-    /// @brief Checks if a victory occurred on the board by one of the playing agents
+    /// @brief Checks if a victory occurred on the board by one of the playing agents on the last turn
     /// @return The color of the winning tokens, or the `empty` token
     token checkVictory() const;
 
