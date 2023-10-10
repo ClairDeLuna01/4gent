@@ -58,43 +58,17 @@ int main(void)
 {
     Board board;
 
-    board.play(red, 0);
-    board.play(yellow, 1);
-    board.play(red, 2);
-    board.play(yellow, 3);
-    board.play(red, 4);
-    board.play(yellow, 5);
-    board.play(red, 6);
-
-    board.play(red, 0);
-    board.play(yellow, 1);
-    board.play(red, 2);
-    board.play(yellow, 3);
-    board.play(red, 4);
-    board.play(yellow, 5);
-    board.play(red, 6);
-
-    board.play(yellow, 0);
     board.play(red, 1);
-    board.play(yellow, 2);
-    board.play(red, 3);
-    board.play(yellow, 4);
-    board.play(red, 5);
-    board.play(yellow, 6);
-
-    board.play(yellow, 0);
     board.play(red, 1);
-    board.play(yellow, 2);
-    board.play(red, 3);
-    board.play(yellow, 4);
-    board.play(red, 5);
-    board.play(yellow, 6);
+    board.play(red, 1);
 
     std::cout << board << std::endl;
-    // std::cout << "score: " << board.evaluate(yellow) << std::endl;
+    evaluateResults rslt;
+    std::cout << "score: " << board.evaluate(red, rslt) << std::endl;
+    std::cout << rslt << std::endl;
 
-    token tok = board.checkVictory();
-    std::cout << "win: " << (tok == red ? "red" : (tok == yellow ? "yellow" : "none")) << std::endl;
+    // token tok = board.checkVictory();
+    // std::cout << "win: " << (tok == red ? "red" : (tok == yellow ? "yellow" : "none")) << std::endl;
 
     // std::vector<BoardHashPair> states = getStates();
 

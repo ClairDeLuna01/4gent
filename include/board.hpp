@@ -32,6 +32,32 @@ struct BoardHash
     }
 };
 
+struct evaluateResults
+{
+    int victoryNextTurn = 0;
+    int threatHorizontal = 0;
+    int threatVertical = 0;
+    int threatDiagonal = 0;
+    int threat2Horizontal = 0;
+    int centrality = 0;
+
+    std::ostream &operator<<(std::ostream &os) const
+    {
+        os << "victoryNextTurn: " << victoryNextTurn << std::endl;
+        os << "threatHorizontal: " << threatHorizontal << std::endl;
+        os << "threatVertical: " << threatVertical << std::endl;
+        os << "threatDiagonal: " << threatDiagonal << std::endl;
+        os << "threat2Horizontal: " << threat2Horizontal << std::endl;
+        os << "centrality: " << centrality << std::endl;
+        return os;
+    }
+
+    friend std::ostream &operator<<(std::ostream &os, const evaluateResults &rslt)
+    {
+        return rslt.operator<<(os);
+    }
+};
+
 class Board
 {
 private:
@@ -55,7 +81,22 @@ public:
 
     void getChildren(token, std::vector<BoardHashPair> &, int limit = 2) const;
 
-    float evaluate(token color) const;
+    float evaluate(token color, evaluateResults &rslt) const;
+
+    // functions to check for 3 sized threats, used in evaluate, no erroneous input checking
+    bool check3HorizontalPositive(int x, int y, token color) const;
+    bool check3HorizontalNegative(int x, int y, token color) const;
+    bool check3Vertical(int x, int y, token color) const;
+    bool check3DiagonalPositive(int x, int y, token color) const;
+    bool check3DiagonalNegative(int x, int y, token color) const;
+
+    // functions to check for 2 sized threats, used in evaluate, no erroneous input checking
+    // returns the number of sides that are free, zero if no threat
+    int check2HorizontalPositive(int x, int y, token color) const;
+    int check2HorizontalNegative(int x, int y, token color) const;
+    int check2Vertical(int x, int y, token color) const;
+    int check2DiagonalPositive(int x, int y, token color) const;
+    int check2DiagonalNegative(int x, int y, token color) const;
 };
 
 struct BoardHashPair
