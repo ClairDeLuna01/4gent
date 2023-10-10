@@ -1,5 +1,5 @@
 CC = g++
-CPPFLAGS = -Wall -Ofast
+CPPFLAGS = -Wall -Ofast -g
 LIBFLAGS = -Iinclude
 LINKFLAGS = -L./ 
 INCLUDE = -Iinclude 
@@ -41,7 +41,7 @@ obj/%.o : src/%.cpp
 PHONY : clean
 
 cleanwin : 
-	$(DEL_win) $(EXEC) obj\*.o
+	$(DEL_win) $(EXEC).exe obj\*.o
 
 clean : 
 	$(DEL_ux) $(EXEC) obj/*.o

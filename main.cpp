@@ -4,100 +4,101 @@
 
 void playHorizontal(Board &board)
 {
-	board.play(yellow, 0);
-	board.play(red, 4);
-	board.play(yellow, 1);
-	board.play(red, 5);
-	board.play(yellow, 2);
-	board.play(red, 6);
-	board.play(yellow, 3);
+    board.play(yellow, 0);
+    board.play(red, 4);
+    board.play(yellow, 1);
+    board.play(red, 5);
+    board.play(yellow, 2);
+    board.play(red, 6);
+    board.play(yellow, 3);
 }
 
 void playVertical(Board &board)
 {
-	board.play(yellow, 0);
-	board.play(red, 1);
-	board.play(yellow, 0);
-	board.play(red, 1);
-	board.play(yellow, 0);
-	board.play(red, 1);
-	board.play(yellow, 0);
+    board.play(yellow, 0);
+    board.play(red, 1);
+    board.play(yellow, 0);
+    board.play(red, 1);
+    board.play(yellow, 0);
+    board.play(red, 1);
+    board.play(yellow, 0);
 }
 
 void playDiagonalBL2TR(Board &board)
 {
-	board.play(yellow, 0);
-	board.play(red, 1);
-	board.play(yellow, 1);
-	board.play(red, 2);
-	board.play(yellow, 3);
-	board.play(red, 3);
-	board.play(yellow, 2);
-	board.play(red, 3);
-	board.play(yellow, 2);
-	board.play(red, 4);
-	board.play(yellow, 3);
+    board.play(yellow, 0);
+    board.play(red, 1);
+    board.play(yellow, 1);
+    board.play(red, 2);
+    board.play(yellow, 3);
+    board.play(red, 3);
+    board.play(yellow, 2);
+    board.play(red, 3);
+    board.play(yellow, 2);
+    board.play(red, 4);
+    board.play(yellow, 3);
 }
 
 void playDiagonalBR2TL(Board &board)
 {
-	board.play(yellow, 4);
-	board.play(red, 3);
-	board.play(yellow, 3);
-	board.play(red, 2);
-	board.play(yellow, 1);
-	board.play(red, 1);
-	board.play(yellow, 2);
-	board.play(red, 1);
-	board.play(yellow, 2);
-	board.play(red, 0);
-	board.play(yellow, 1);
+    board.play(yellow, 4);
+    board.play(red, 3);
+    board.play(yellow, 3);
+    board.play(red, 2);
+    board.play(yellow, 1);
+    board.play(red, 1);
+    board.play(yellow, 2);
+    board.play(red, 1);
+    board.play(yellow, 2);
+    board.play(red, 0);
+    board.play(yellow, 1);
 }
 
 int main(void)
 {
-	// Board board;
-	// board.play(red, 1);
-	// board.play(red, 1);
-	// board.play(red, 1);
-	// board.play(red, 1);
-	// board.play(red, 1);
-	// board.play(red, 1);
-	// board.play(red, 1);
-	// board.play(red, 6);
-	// board.play(yellow, 2);
-	// playDiagonalBL2TR(board);
+    Board board;
 
-	// std::cout << "\nlegal moves :";
-	// std::vector<int> test = board.getLegalMoves();
-	// for(size_t i  = 0; i < test.size(); i++)
-	// 	std::cout << test[i] << " ";
+    board.play(red, 0);
+    board.play(yellow, 1);
+    board.play(red, 2);
+    board.play(yellow, 3);
+    board.play(red, 4);
+    board.play(yellow, 5);
+    board.play(red, 6);
 
-	std::vector<BoardHashPair> states = getStates();
-	// for(int i = 0; i < states.size(); i++) {
-	//     std::cout << states[i];
-	// }
-	std::cout << "Number of states: " << states.size() << std::endl;
+    board.play(red, 0);
+    board.play(yellow, 1);
+    board.play(red, 2);
+    board.play(yellow, 3);
+    board.play(red, 4);
+    board.play(yellow, 5);
+    board.play(red, 6);
 
-	// playHorizontal(board);
-	// std::cout << board;
-	// std::cout << "winner : " << (int)board.checkVictory() << "\n";
-	// board.clear();
+    board.play(yellow, 0);
+    board.play(red, 1);
+    board.play(yellow, 2);
+    board.play(red, 3);
+    board.play(yellow, 4);
+    board.play(red, 5);
+    board.play(yellow, 6);
 
-	// playVertical(board);
-	// std::cout << board;
-	// std::cout << "winner : " << (int)board.checkVictory() << "\n";
-	// board.clear();
+    board.play(yellow, 0);
+    board.play(red, 1);
+    board.play(yellow, 2);
+    board.play(red, 3);
+    board.play(yellow, 4);
+    board.play(red, 5);
+    board.play(yellow, 6);
 
-	// playDiagonalBL2TR(board);
-	// std::cout << board;
-	// std::cout << "winner : " << (int)board.checkVictory() << "\n";
-	// board.clear();
+    std::cout << board << std::endl;
+    // std::cout << "score: " << board.evaluate(yellow) << std::endl;
 
-	// playDiagonalBR2TL(board);
-	// std::cout << board;
-	// std::cout << "winner : " << (int)board.checkVictory() << "\n";
-	// board.clear();
+    token tok = board.checkVictory();
+    std::cout << "win: " << (tok == red ? "red" : (tok == yellow ? "yellow" : "none")) << std::endl;
 
-	return 0;
+    // std::vector<BoardHashPair> states = getStates();
+
+    // std::cout << "Number of states: " << states.size() << std::endl;
+
+    return 0;
 }

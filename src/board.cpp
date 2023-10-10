@@ -68,156 +68,28 @@ bool iswinning(token t, token &color, int &count)
 
 token Board::checkVictory() const
 {
-    // // check y lines
-    // int count = 0;
-    // token color = empty;
-    // for(int x = 0; x < BOARD_SIZE_X; x++)
-    // {
-    //     count = 0;
-    //     color = empty;
-    //     for(int y = 0; y < BOARD_SIZE_Y; y++)
-    //         if(iswinning(grid[x][y], color, count))
-    //             return color;
-    // }
 
-    // // check x lines
-    // for(int y = 0; y < BOARD_SIZE_Y; y++)
-    // {
-    //     count = 0;
-    //     color = empty;
-    //     for(int x = 0; x < BOARD_SIZE_X; x++)
-    //         if(iswinning(grid[x][y], color, count))
-    //             return color;
-    // }
-
-    // // checking diagonal +x -y
-    // int count2 = 0;
-    // token color2 = empty;
-    // for(int y = 3; y < BOARD_SIZE_Y; y++)
-    // {
-    //     count = 0;
-    //     color = empty;
-    //     count2 = 0;
-    //     color2 = empty;
-    //     int ytmp = y;
-    //     for(int x = 0; x < BOARD_SIZE_X && ytmp > 0; x++, ytmp--)
-    //     {
-    //         if(iswinning(grid[x][ytmp], color, count))
-    //             return color;
-    //         if(iswinning(grid[BOARD_SIZE_X-1-x][ytmp], color2, count2))
-    //             return color;
-    //     }
-    // }
-
-    // // checking diagonal +x +y
-    // for(int x = 1; x < 4; x++)
-    // {
-    //     count = 0;
-    //     color = empty;
-    //     count2 = 0;
-    //     color2 = empty;
-    //     int xtmp = x;
-    //     for(int y = BOARD_SIZE_Y-1; xtmp < BOARD_SIZE_X && y > 0; xtmp++, y--)
-    //     {
-    //         if(iswinning(grid[xtmp][y], color, count))
-    //             return color;
-    //         if(iswinning(grid[BOARD_SIZE_X-1-xtmp][y], color2, count2))
-    //             return color;
-    //     }
-    // }
-
-    // return empty;
-
-    token color = grid[lastPlayedPos.first][lastPlayedPos.second];
-
-    int count = 0;
-    for(int x = lastPlayedPos.first; x < BOARD_SIZE_X; x ++)
+    for (int x = 0; x < BOARD_SIZE_X; x++)
     {
-        if(grid[x][lastPlayedPos.second] == color)
-            count++;
-        else
-            break;
+        for (int y = 0; y < BOARD_SIZE_Y; y++)
+        {
+            if (grid[x][y] == empty)
+                continue;
+            // check horizontal
+            token c = grid[x][y];
+            if (x < BOARD_SIZE_X - 3 && c == grid[x + 1][y] && c == grid[x + 2][y] && c == grid[x + 3][y])
+                return c;
+            // check vertical
+            if (y < BOARD_SIZE_Y - 3 && c == grid[x][y + 1] && c == grid[x][y + 2] && c == grid[x][y + 3])
+                return c;
+            // check diagonal
+            if (x < BOARD_SIZE_X - 3 && y < BOARD_SIZE_Y - 3 && c == grid[x + 1][y + 1] && c == grid[x + 2][y + 2] && c == grid[x + 3][y + 3])
+                return c;
+
+            if (x > 2 && y < BOARD_SIZE_Y - 3 && c == grid[x - 1][y + 1] && c == grid[x - 2][y + 2] && c == grid[x - 3][y + 3])
+                return c;
+        }
     }
-
-    for(int x = lastPlayedPos.first; x >= 0; x --)
-    {
-        if(grid[x][lastPlayedPos.second] == color)
-            count++;
-        else
-            break;
-    }
-    
-    if(count >= 4)
-        return color;
-    count = 0;
-
-    for(int y = lastPlayedPos.second; y < BOARD_SIZE_Y; y ++)
-    {
-        if(grid[lastPlayedPos.first][y] == color)
-            count++;
-        else
-            break;
-    }
-
-    for(int y = lastPlayedPos.second; y >= 0; y --)
-    {
-        if(grid[lastPlayedPos.first][y] == color)
-            count++;
-        else
-            break;
-    }
-
-    if(count >= 4)
-        return color;
-    count = 0;
-
-    int x = lastPlayedPos.first;
-    int y = lastPlayedPos.second;
-    for(;x < BOARD_SIZE_X && y < BOARD_SIZE_Y; x++, y++)
-    {
-        if(grid[x][y] == color)
-            count++;
-        else
-            break;
-    }
-
-    x = lastPlayedPos.first;
-    y = lastPlayedPos.second;
-    for(;x >= 0 && y >= 0; x--, y--)
-    {
-        if(grid[x][y] == color)
-            count++;
-        else
-            break;
-    }
-
-    if(count >= 4)
-        return color;
-    count = 0;
-
-    x = lastPlayedPos.first;
-    y = lastPlayedPos.second;
-    for(;x >= 0 && y < BOARD_SIZE_Y; x--, y++)
-    {
-        if(grid[x][y] == color)
-            count++;
-        else
-            break;
-    }
-
-    x = lastPlayedPos.first;
-    y = lastPlayedPos.second;
-    for(;x < BOARD_SIZE_X && y >= 0; x++, y--)
-    {
-        if(grid[x][y] == color)
-            count++;
-        else
-            break;
-    }
-
-    if(count >= 4)
-        return color;
-    count = 0;
 
     return empty;
 }
@@ -324,4 +196,89 @@ BoardHash Board::getHash() const
     hash.high = high;
 
     return hash;
+}
+
+#define VICTORY_NEXT_TURN 1000000
+#define THREAT_HORIZONTAL 1000
+#define THREAT_VERTICAL 2000
+#define CENTRALITY_HIGH 100
+#define CENTRALITY_LOW 0
+
+float Board::evaluate(token color) const
+{
+    const token opponent = color == red ? yellow : red;
+    float score = 0;
+    // test if there can be a win in the next move
+    for (int x = 0; x < BOARD_SIZE_X; x++)
+    {
+        Board tmp(*this);
+        tmp.play(color, x);
+        if (tmp.checkVictory() == color)
+            return 1000000;
+    }
+
+    // test if the opponent can win in the next move
+    for (int x = 0; x < BOARD_SIZE_X; x++)
+    {
+        Board tmp(*this);
+        tmp.play(opponent, x);
+        if (tmp.checkVictory() == opponent)
+            return -1000000;
+    }
+
+    // test if there is a threat of 3 in a row with a free space on the left or right
+    for (int x = 0; x < BOARD_SIZE_X; x++)
+    {
+        for (int y = 0; y < BOARD_SIZE_Y; y++)
+        {
+            if (grid[x][y] != empty)
+            {
+                int myColor = (grid[x][y] == color ? 1 : -1);
+                // horizontal threat
+                if (x < BOARD_SIZE_X - 3 && grid[x + 1][y] == color && grid[x + 2][y] == color && grid[x + 3][y] == empty)
+                    score += THREAT_HORIZONTAL * myColor;
+                if (x > 2 && grid[x - 1][y] == color && grid[x - 2][y] == color && grid[x - 3][y] == empty)
+                    score += THREAT_HORIZONTAL * myColor;
+
+                // vertical threat
+                if (y < BOARD_SIZE_Y - 3 && grid[x][y + 1] == color && grid[x][y + 2] == color && grid[x][y + 3] == empty)
+                    score += THREAT_VERTICAL * myColor;
+
+                // diagonal threat
+                if (x < BOARD_SIZE_X - 3 && y < BOARD_SIZE_Y - 3 && grid[x + 1][y + 1] == color && grid[x + 2][y + 2] == color && grid[x + 3][y + 3] == empty)
+                    score += THREAT_HORIZONTAL * myColor;
+            }
+        }
+    }
+
+    // test if there is a threat of 2 in a row with a free space on the left AND right
+    for (int x = 1; x < BOARD_SIZE_X; x++)
+    {
+        for (int y = 0; y < BOARD_SIZE_Y; y++)
+        {
+            if (grid[x][y] != empty)
+            {
+                int myColor = (grid[x][y] == color ? 1 : -1);
+                // horizontal threat
+                if (x < BOARD_SIZE_X - 2 && grid[x + 1][y] == color && grid[x + 2][y] == empty && grid[x - 1][y] == empty)
+                    score += THREAT_HORIZONTAL * myColor;
+            }
+        }
+    }
+
+    // add score based on piece position
+    for (int x = 0; x < BOARD_SIZE_X; x++)
+    {
+        for (int y = 0; y < BOARD_SIZE_Y; y++)
+        {
+            if (grid[x][y] != empty)
+            {
+                int myColor = (grid[x][y] == color ? 1 : -1);
+                float cent = (x < BOARD_SIZE_X / 2 ? x : BOARD_SIZE_X - x) * CENTRALITY_HIGH / (BOARD_SIZE_X / 2) + CENTRALITY_LOW;
+                score += cent * myColor;
+            }
+        }
+    }
+
+    return score;
 }

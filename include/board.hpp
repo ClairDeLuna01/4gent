@@ -54,6 +54,8 @@ public:
     BoardHash getHash() const;
 
     void getChildren(token, std::vector<BoardHashPair> &, int limit = 2) const;
+
+    float evaluate(token color) const;
 };
 
 struct BoardHashPair
@@ -61,8 +63,6 @@ struct BoardHashPair
     Board board;
     BoardHash hash;
 };
-
-const int i = sizeof(BoardHashPair);
 
 std::ostream &operator<<(std::ostream &os, const Board &b);
 
