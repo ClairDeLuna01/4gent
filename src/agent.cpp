@@ -24,7 +24,6 @@ Player::Player(token color) : Agent(color)
 move Player::getMove(Board board)
 {
     std::vector<move> legalMoves = board.getLegalMoves();
-    std::cout << board << std::endl;
     move mv;
     while (1)
     {
@@ -109,4 +108,16 @@ move MiniMaxAgent::getMove(Board board)
     std::cout << std::endl;
 
     return moves[0];
+}
+
+Agent::~Agent()
+{
+}
+
+Player::~Player()
+{
+}
+
+MiniMaxAgent::~MiniMaxAgent()
+{
 }

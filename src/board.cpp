@@ -798,3 +798,10 @@ float Board::evaluate(token color) const
 
     return score;
 }
+
+bool Board::isFull() const {
+    for (int i = 0; i < BOARD_SIZE_X; ++i)
+        if (grid[i][BOARD_SIZE_Y - 1] == empty)
+            return false;
+    return true;
+}

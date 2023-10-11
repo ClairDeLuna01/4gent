@@ -134,6 +134,10 @@ public:
     int check2HorizontalNegative(int x, int y, token color) const;
     int check2DiagonalPositive(int x, int y, token color) const;
     int check2DiagonalNegative(int x, int y, token color) const;
+
+    /// @brief Returns if the board is full
+    /// @return `true` if the board is full, `false` otherwise
+    bool isFull() const;
 };
 
 struct BoardHashPair

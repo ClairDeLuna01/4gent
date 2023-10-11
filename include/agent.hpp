@@ -21,10 +21,12 @@ public:
     /// @param board The game board
     /// @return The move decided by the agent
     virtual move getMove(Board board);
+
+    virtual ~Agent();
 };
 
 /// @brief The Player class defines an agent that is typically played by the human
-class Player : Agent
+class Player : public Agent
 {
 public:
     /// @brief Initializes the player
@@ -34,11 +36,13 @@ public:
     /// @brief Returns the player's move
     /// @param board The game board
     /// @return The move decided by the player
-    move getMove(Board board);
+    move getMove(Board board) override;
+
+    ~Player();
 };
 
 /// @brief The MiniMaxAgent class defines the artificial intelligence that plays against the player.
-class MiniMaxAgent : Agent
+class MiniMaxAgent : public Agent
 {
 public:
     /// @brief Initializes the AI
@@ -48,7 +52,9 @@ public:
     /// @brief Returns the AI's move
     /// @param board The game board
     /// @return The move calculated by the AI
-    move getMove(Board board);
+    move getMove(Board board) override;
+
+    ~MiniMaxAgent();
 };
 
 /// @brief Returns all possible states for the agent
