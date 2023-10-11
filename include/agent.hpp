@@ -43,7 +43,7 @@ class MiniMaxAgent : Agent
 public:
     /// @brief Initializes the AI
     /// @param color The AI's token color
-    MiniMaxAgent(token color);
+    MiniMaxAgent(token color) : Agent(color) {}
 
     /// @brief Returns the AI's move
     /// @param board The game board

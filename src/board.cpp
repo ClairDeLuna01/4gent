@@ -2,6 +2,7 @@
 #include <string.h>
 #include <algorithm>
 #include <cmath>
+#include <memory>
 #include "agent.hpp"
 
 token Board::operator()(int x, int y) const
@@ -91,7 +92,8 @@ token Board::checkVictory() const
     // Checks diagonally (/)
     bMin = std::max(-3, -std::min(x, y));
     bMax = std::min(0, std::min(nX, nY));
-    for (int i = bMin; i <= bMax; ++i) {
+    for (int i = bMin; i <= bMax; ++i)
+    {
         const token startToken = grid[x + i][y + i];
         if (startToken == grid[x + i + 1][y + i + 1] && startToken == grid[x + i + 2][y + i + 2] && startToken == grid[x + i + 3][y + i + 3])
             return lastPlayedToken;
@@ -100,7 +102,8 @@ token Board::checkVictory() const
     // Checks diagonally (\)
     bMin = std::max(-3, -std::min(x, nY));
     bMax = std::min(0, std::min(nX, y));
-    for (int i = bMin; i <= bMax; ++i) {
+    for (int i = bMin; i <= bMax; ++i)
+    {
         const token startToken = grid[x + i][y - i];
         if (startToken == grid[x + i + 1][y - i - 1] && startToken == grid[x + i + 2][y - i - 2] && startToken == grid[x + i + 3][y - i - 3])
             return lastPlayedToken;
@@ -153,9 +156,9 @@ std::ostream &operator<<(std::ostream &os, const Board &b)
     return os;
 }
 
-void Board::getChildren(token color, std::vector<BoardHashPair> &states, int limit) const
+void Board::getChildren(token color, std::vector<BoardHashPair> &states, BoardHashPair &thisBoard, int limit) const
 {
-    std::vector<Board> children;
+    std::vector<BoardHashPair> children;
 
     std::vector<int> moves = getLegalMoves();
     int movesCount = moves.size();
@@ -163,18 +166,24 @@ void Board::getChildren(token color, std::vector<BoardHashPair> &states, int lim
     {
 
         Board tmp(*this);
-        // memcpy(&tmp, this, sizeof(Board));
 
         tmp.play(color, moves[i]);
+
         const BoardHash newHash = tmp.getHash();
+        // std::cout << newHash.low << " " << newHash.high << std::endl;
         if (std::find_if(states.begin(), states.end(), [&](BoardHashPair pair)
                          { return newHash == pair.hash; }) == states.end())
         {
-            states.push_back({tmp, newHash});
+            float score = tmp.evaluate(color);
+            BoardHashPair child = {tmp, newHash, score};
+            states.push_back(child);
             if (limit > 0)
-                tmp.getChildren(color == red ? yellow : red, states, limit - 1);
+                tmp.getChildren(color == red ? yellow : red, states, child, limit - 1);
+            children.push_back(child);
         }
     }
+
+    thisBoard.children = children;
 }
 
 BoardHash Board::getHash() const
@@ -192,10 +201,9 @@ BoardHash Board::getHash() const
     {
         for (int y = 0; y < BOARD_SIZE_Y; y++)
         {
-            int bit = x * BOARD_SIZE_Y + y;
+            int bit = (x * BOARD_SIZE_Y + y) * 2;
             unsigned int color = grid[x][y] == empty ? empty : grid[x][y] == red ? red
                                                                                  : yellow;
-
             if (bit < 64)
             {
                 low |= color << bit;
@@ -209,6 +217,8 @@ BoardHash Board::getHash() const
 
     hash.low = low;
     hash.high = high;
+
+    // std::cout << low << " " << high << std::endl;
 
     return hash;
 }
@@ -601,7 +611,7 @@ int Board::check2DiagonalNegative(int x, int y, token color) const
 #define THREAT2_VERTICAL 200
 #define CENTRALITY_HIGH 100
 #define CENTRALITY_LOW 0
-float Board::evaluate(token color, evaluateResults &rslt) const
+float Board::evaluate(token color) const
 {
     float score = 0;
     // test if there is a threat of 3 in a row with a free space on the left or right
@@ -619,32 +629,27 @@ float Board::evaluate(token color, evaluateResults &rslt) const
                     int test = check3HorizontalPositive(x, y, tileColor);
                     // if (test == ) // TODO: keep going here
                     score += THREAT3_HORIZONTAL * myColor;
-                    rslt.threatHorizontal++;
                 }
                 if (x > 2 && check3HorizontalNegative(x, y, tileColor))
                 {
                     score += THREAT3_HORIZONTAL * myColor;
-                    rslt.threatHorizontal++;
                 }
 
                 // vertical threat
                 if (y < BOARD_SIZE_Y - 3 && check3Vertical(x, y, tileColor))
                 {
                     score += THREAT3_VERTICAL * myColor;
-                    rslt.threatVertical++;
                 }
 
                 // diagonal threat
                 if (x < BOARD_SIZE_X - 3 && y < BOARD_SIZE_Y - 3 && check3DiagonalPositive(x, y, tileColor))
                 {
                     score += THREAT3_HORIZONTAL * myColor;
-                    rslt.threatDiagonal++;
                 }
 
                 if (x > 2 && y < BOARD_SIZE_Y - 3 && check3DiagonalNegative(x, y, tileColor))
                 {
                     score += THREAT3_HORIZONTAL * myColor;
-                    rslt.threatDiagonal++;
                 }
 
                 // test if there is a threat of 2 in a row with a free space on the left AND right
@@ -656,7 +661,6 @@ float Board::evaluate(token color, evaluateResults &rslt) const
                     if (grid[x + 1][y] == tileColor && grid[x + 2][y] == empty && grid[x - 1][y] == empty)
                     {
                         score += THREAT2_HORIZONTAL * myColor;
-                        rslt.threat2Horizontal++;
                     }
                 }
 
@@ -666,7 +670,6 @@ float Board::evaluate(token color, evaluateResults &rslt) const
                     int myColor = (grid[x][y] == color ? 1 : -1);
                     float cent = (float)CENTRALITY_LOW + (float)CENTRALITY_HIGH * ((1.0f - (float)std::abs(x - 3) / 3.0f));
                     score += cent * myColor;
-                    rslt.centrality += cent * myColor;
                 }
             }
         }

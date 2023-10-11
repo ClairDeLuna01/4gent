@@ -58,21 +58,17 @@ int main(void)
 {
     Board board;
 
-    board.play(red, 1);
-    board.play(red, 1);
-    board.play(red, 1);
+    // board.play(red, 1);
+    // board.play(red, 1);
+    // board.play(red, 1);
 
-    std::cout << board << std::endl;
-    evaluateResults rslt;
-    std::cout << "score: " << board.evaluate(red, rslt) << std::endl;
-    std::cout << rslt << std::endl;
+    // std::cout << board << std::endl;
+    // // evaluateResults rslt;
+    // // std::cout << "score: " << board.evaluate(red, rslt) << std::endl;
+    // // std::cout << rslt << std::endl;
 
-    // token tok = board.checkVictory();
-    // std::cout << "win: " << (tok == red ? "red" : (tok == yellow ? "yellow" : "none")) << std::endl;
+    MiniMaxAgent agent(red);
 
-    // std::vector<BoardHashPair> states = getStates();
-
-    // std::cout << "Number of states: " << states.size() << std::endl;
-
+    agent.getMove(board);
     return 0;
 }

@@ -105,9 +105,9 @@ public:
     /// @return A hash of the board
     BoardHash getHash() const;
 
-    void getChildren(token, std::vector<BoardHashPair> &, int limit = 2) const;
+    void getChildren(token color, std::vector<BoardHashPair> &states, BoardHashPair &thisBoard, int limit = 2) const;
 
-    float evaluate(token color, evaluateResults &rslt) const;
+    float evaluate(token color) const;
 
     // functions to check for 3 sized threats, used in evaluate, no erroneous input checking
 
@@ -140,6 +140,8 @@ struct BoardHashPair
 {
     Board board;
     BoardHash hash;
+    float score;
+    std::vector<BoardHashPair> children;
 };
 
 /// @brief Write the board to the standard output
