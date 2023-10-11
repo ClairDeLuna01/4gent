@@ -592,15 +592,29 @@ int Board::check2DiagonalNegative(int x, int y, token color) const
 }
 
 #define VICTORY INFINITY
+
 #define THREAT3_HORIZONTAL 1000
 #define THREAT3_HORIZONTAL_BIG 100000
 #define THREAT3_HORIZONTAL_SMALL 500
+
+#define THREAT3_DIAGONAL 1000
+#define THREAT3_DIAGONAL_BIG 100000
+#define THREAT3_DIAGONAL_SMALL 500
+
 #define THREAT3_VERTICAL 2000
+
 #define THREAT2_HORIZONTAL 1000
 #define THREAT2_HORIZONTAL_BIG 1500
+
+#define THREAT2_DIAGONAL 1000
+#define THREAT2_DIAGONAL_BIG 1500
+
 #define THREAT2_VERTICAL 200
+
 #define CENTRALITY_HIGH 100
 #define CENTRALITY_LOW 0
+
+
 float Board::evaluate(token color, evaluateResults &rslt) const
 {
     float score = 0;
@@ -617,47 +631,103 @@ float Board::evaluate(token color, evaluateResults &rslt) const
                 if (x < BOARD_SIZE_X - 3)
                 {
                     int test = check3HorizontalPositive(x, y, tileColor);
-                    // if (test == ) // TODO: keep going here
-                    score += THREAT3_HORIZONTAL * myColor;
-                    rslt.threatHorizontal++;
+                    
+                    switch (test)
+                    {
+                        case 1 : score += THREAT3_HORIZONTAL_SMALL * myColor; break;
+                        case 2 : score += THREAT3_HORIZONTAL * myColor; break;
+                        case 3 : score += THREAT3_HORIZONTAL_BIG * myColor; break;
+                        default: break;
+                    }
                 }
-                if (x > 2 && check3HorizontalNegative(x, y, tileColor))
+                if (x > 2)
                 {
-                    score += THREAT3_HORIZONTAL * myColor;
-                    rslt.threatHorizontal++;
+                    int test = check3HorizontalNegative(x, y, tileColor);
+
+                    switch (test)
+                    {
+                        case 1 : score += THREAT3_DIAGONAL_SMALL * myColor; break;
+                        case 2 : score += THREAT3_HORIZONTAL * myColor; break;
+                        case 3 : score += THREAT3_HORIZONTAL_BIG * myColor; break;
+                        default: break;
+                    }
                 }
 
                 // vertical threat
                 if (y < BOARD_SIZE_Y - 3 && check3Vertical(x, y, tileColor))
                 {
                     score += THREAT3_VERTICAL * myColor;
-                    rslt.threatVertical++;
                 }
 
                 // diagonal threat
-                if (x < BOARD_SIZE_X - 3 && y < BOARD_SIZE_Y - 3 && check3DiagonalPositive(x, y, tileColor))
+                if (x < BOARD_SIZE_X - 3 && y < BOARD_SIZE_Y - 3 &&)
                 {
-                    score += THREAT3_HORIZONTAL * myColor;
-                    rslt.threatDiagonal++;
+                    int test = check3DiagonalPositive(x, y, tileColor);
+
+                    switch (test)
+                    {
+                        case 1 : score += THREAT3_DIAGONAL_SMALL * myColor; break;
+                        case 2 : score += THREAT3_DIAGONAL * myColor; break;
+                        case 3 : score += THREAT3_DIAGONAL_BIG * myColor; break;
+                        default: break;
+                    };
                 }
 
-                if (x > 2 && y < BOARD_SIZE_Y - 3 && check3DiagonalNegative(x, y, tileColor))
+                if (x > 2 && y < BOARD_SIZE_Y - 3)
                 {
-                    score += THREAT3_HORIZONTAL * myColor;
-                    rslt.threatDiagonal++;
+                    int test = check3DiagonalNegative(x, y, tileColor);
+
+                    switch (test)
+                    {
+                        case 1 : score += THREAT3_DIAGONAL_SMALL * myColor; break;
+                        case 2 : score += THREAT3_DIAGONAL * myColor; break;
+                        case 3 : score += THREAT3_DIAGONAL_BIG * myColor; break;
+                        default: break;
+                    };
                 }
 
                 // test if there is a threat of 2 in a row with a free space on the left AND right
                 if (grid[x][y] != empty)
                 {
-                    int myColor = (grid[x][y] == color ? 1 : -1);
-                    token tileColor = grid[x][y];
-                    // horizontal threat
-                    if (grid[x + 1][y] == tileColor && grid[x + 2][y] == empty && grid[x - 1][y] == empty)
+                    int test;
+                    
+                    test = x >= 1 && x <= BOARD_SIZE_X-3 ? check2HorizontalPositive(x, y, tileColor) : 0;
+                    switch (test)
                     {
-                        score += THREAT2_HORIZONTAL * myColor;
-                        rslt.threat2Horizontal++;
-                    }
+                        case 1 : score += THREAT2_HORIZONTAL * myColor; break;
+                        case 2 : score += THREAT2_HORIZONTAL_BIG * myColor; break;
+                        default: break;
+                    };
+
+
+                    test = x >= 2 && x <= BOARD_SIZE_X-2 ? check2HorizontalNegative(x, y, tileColor) : 0;
+                    switch (test)
+                    {
+                        case 1 : score += THREAT2_HORIZONTAL * myColor; break;
+                        case 2 : score += THREAT2_HORIZONTAL_BIG * myColor; break;
+                        default: break;
+                    };
+
+                    test = 
+                        x >= 1 && x <= BOARD_SIZE_X-3 && y >= 1 && y <= BOARD_SIZE_Y-3 ? 
+                        check2DiagonalPositive(x, y, tileColor) : 0;
+
+                    switch (test)
+                    {
+                        case 1 : score += THREAT2_DIAGONAL * myColor; break;
+                        case 2 : score += THREAT2_DIAGONAL_BIG * myColor; break;
+                        default: break;
+                    };
+
+                    test = 
+                        x >= 2 && x <= BOARD_SIZE_X-2 && y >= 2 && y <= BOARD_SIZE_Y-2
+                        ? check2DiagonalNegative(x, y, tileColor) : 0;
+                    switch (test)
+                    {
+                        case 1 : score += THREAT2_DIAGONAL * myColor; break;
+                        case 2 : score += THREAT2_DIAGONAL_BIG * myColor; break;
+                        default: break;
+                    };
                 }
 
                 // add score based on piece position
@@ -666,7 +736,6 @@ float Board::evaluate(token color, evaluateResults &rslt) const
                     int myColor = (grid[x][y] == color ? 1 : -1);
                     float cent = (float)CENTRALITY_LOW + (float)CENTRALITY_HIGH * ((1.0f - (float)std::abs(x - 3) / 3.0f));
                     score += cent * myColor;
-                    rslt.centrality += cent * myColor;
                 }
             }
         }
