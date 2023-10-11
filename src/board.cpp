@@ -660,7 +660,7 @@ float Board::evaluate(token color, evaluateResults &rslt) const
                 }
 
                 // diagonal threat
-                if (x < BOARD_SIZE_X - 3 && y < BOARD_SIZE_Y - 3 &&)
+                if (x < BOARD_SIZE_X - 3 && y < BOARD_SIZE_Y - 3)
                 {
                     int test = check3DiagonalPositive(x, y, tileColor);
 
