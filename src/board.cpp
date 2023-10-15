@@ -601,7 +601,9 @@ int Board::check2DiagonalNegative(int x, int y, token color) const
     return count == 1 && countActualEmpty >= 2;
 }
 
-#define VICTORY INFINITY
+#include <float.h>
+#define VICTORY FLT_MAX
+#define LOSS -INFINITY
 
 #define THREAT3_HORIZONTAL 1000
 #define THREAT3_HORIZONTAL_BIG 100000
@@ -632,7 +634,7 @@ float Board::evaluate(token color) const
         if (victory == color)
             return VICTORY;
         else
-            return -VICTORY;
+            return LOSS;
     }
     float score = 0;
     // test if there is a threat of 3 in a row with a free space on the left or right

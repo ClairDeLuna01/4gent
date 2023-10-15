@@ -4,6 +4,11 @@ typedef int move;
 
 #include <board.hpp>
 
+enum agentType
+{
+    PLAYER,
+    MINIMAX
+};
 /// @brief The agent class which defines an intelligent agent
 class Agent
 {
@@ -12,16 +17,19 @@ protected:
     token color;
 
 public:
+    /// @brief The agent's type
+    agentType type;
+
     /// @brief Builds an agent
     /// @param color The agent's token color
-    Agent(token color);
+    Agent(token color, agentType type);
 
     /// @brief Returns the agent's move
     /// @param board The game board
     /// @return The move decided by the agent
     virtual move getMove(Board board);
 
-    virtual ~Agent(){};
+    virtual ~Agent();
 };
 
 /// @brief The Player class defines an agent that is typically played by the human
@@ -37,7 +45,7 @@ public:
     /// @return The move decided by the player
     move getMove(Board board) override;
 
-    ~Player(){};
+    ~Player();
 };
 
 /// @brief The MiniMaxAgent class defines the artificial intelligence that plays against the player.
@@ -53,7 +61,7 @@ public:
     /// @return The move calculated by the AI
     move getMove(Board board) override;
 
-    ~MiniMaxAgent(){};
+    ~MiniMaxAgent();
 };
 
 /// @brief Returns all possible states for the agent

@@ -8,9 +8,10 @@
 #include <float.h>
 #include <cmath>
 
-Agent::Agent(token color)
+Agent::Agent(token color, agentType type)
 {
     this->color = color;
+    this->type = type;
 }
 
 move Agent::getMove(Board board)
@@ -18,18 +19,17 @@ move Agent::getMove(Board board)
     return board.getLegalMoves()[0];
 }
 
-Player::Player(token color) : Agent(color)
+Player::Player(token color) : Agent(color, PLAYER)
 {
 }
 
-MiniMaxAgent::MiniMaxAgent(token color) : Agent(color)
+MiniMaxAgent::MiniMaxAgent(token color) : Agent(color, MINIMAX)
 {
 }
 
 move Player::getMove(Board board)
 {
     std::vector<move> legalMoves = board.getLegalMoves();
-    std::cout << board << std::endl;
     move mv;
     while (1)
     {
@@ -66,7 +66,7 @@ std::vector<BoardHashPair> getStates()
     return states;
 }
 
-#define DEPTH 1
+#define DEPTH 4
 
 // recursively explore children
 // at the end, return the sequence of moves where the first one is the one you should take as well as the score
@@ -78,9 +78,9 @@ void exploreChildren(BoardHashPair &state, std::array<int, DEPTH> &bestMoves, fl
         return;
     }
 
-    if (state.score == INFINITY)
+    if (state.score == FLT_MAX)
     {
-        bestScore = INFINITY;
+        bestScore = FLT_MAX;
         return;
     }
 
@@ -93,7 +93,7 @@ void exploreChildren(BoardHashPair &state, std::array<int, DEPTH> &bestMoves, fl
     if (color == agentColor) // Maximizing player
     {
         bestScore = -FLT_MAX;
-        for (int i = 0; i < state.children.size(); i++)
+        for (size_t i = 0; i < state.children.size(); i++)
         {
             float score = -FLT_MAX;
             std::array<int, DEPTH> moves(bestMoves);
@@ -109,7 +109,7 @@ void exploreChildren(BoardHashPair &state, std::array<int, DEPTH> &bestMoves, fl
     else // Minimizing player
     {
         float minScore = FLT_MAX;
-        for (int i = 0; i < state.children.size(); i++)
+        for (size_t i = 0; i < state.children.size(); i++)
         {
             float score = FLT_MAX;
             std::array<int, DEPTH> moves(bestMoves);
@@ -160,4 +160,16 @@ move MiniMaxAgent::getMove(Board board)
     // }
 
     return moves[0];
+}
+
+Agent::~Agent()
+{
+}
+
+Player::~Player()
+{
+}
+
+MiniMaxAgent::~MiniMaxAgent()
+{
 }
