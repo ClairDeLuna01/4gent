@@ -37,34 +37,6 @@ struct BoardHash
     }
 };
 
-/// @brief Results evaluation data structure
-struct evaluateResults
-{
-    int victoryNextTurn = 0;
-    int threatHorizontal = 0;
-    int threatVertical = 0;
-    int threatDiagonal = 0;
-    int threat2Horizontal = 0;
-    int centrality = 0;
-
-    std::ostream &operator<<(std::ostream &os) const
-    {
-        os << "victoryNextTurn: " << victoryNextTurn << std::endl;
-        os << "threatHorizontal: " << threatHorizontal << std::endl;
-        os << "threatVertical: " << threatVertical << std::endl;
-        os << "threatDiagonal: " << threatDiagonal << std::endl;
-        os << "threat2Horizontal: " << threat2Horizontal << std::endl;
-        os << "centrality: " << centrality << std::endl;
-        return os;
-    }
-
-    /// @brief Write the evaluation results to the standard output
-    friend std::ostream &operator<<(std::ostream &os, const evaluateResults &rslt)
-    {
-        return rslt.operator<<(os);
-    }
-};
-
 /// @brief The Board class hosts most of the logic of the game
 class Board
 {
@@ -134,6 +106,10 @@ public:
     int check2HorizontalNegative(int x, int y, token color) const;
     int check2DiagonalPositive(int x, int y, token color) const;
     int check2DiagonalNegative(int x, int y, token color) const;
+
+    /// @brief Returns if the board is full
+    /// @return `true` if the board is full, `false` otherwise
+    bool isFull() const;
 };
 
 struct BoardHashPair

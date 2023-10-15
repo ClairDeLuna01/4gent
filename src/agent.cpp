@@ -6,6 +6,7 @@
 #include "agent.hpp"
 #include <string.h>
 #include <float.h>
+#include <cmath>
 
 Agent::Agent(token color)
 {
@@ -18,6 +19,10 @@ move Agent::getMove(Board board)
 }
 
 Player::Player(token color) : Agent(color)
+{
+}
+
+MiniMaxAgent::MiniMaxAgent(token color) : Agent(color)
 {
 }
 
@@ -61,11 +66,11 @@ std::vector<BoardHashPair> getStates()
     return states;
 }
 
-#define DEPTH 5
+#define DEPTH 1
 
 // recursively explore children
-// at the end, return the sequence of moves with the best score as well as the score
-void exploreChildren(BoardHashPair &state, std::array<int, DEPTH> &bestMoves, float &bestScore, int depth = 0)
+// at the end, return the sequence of moves where the first one is the one you should take as well as the score
+void exploreChildren(BoardHashPair &state, std::array<int, DEPTH> &bestMoves, float &bestScore, token agentColor, token color, int depth = 0)
 {
     if (depth == DEPTH)
     {
@@ -73,17 +78,50 @@ void exploreChildren(BoardHashPair &state, std::array<int, DEPTH> &bestMoves, fl
         return;
     }
 
-    for (int i = 0; i < state.children.size(); i++)
+    if (state.score == INFINITY)
     {
-        float score = -FLT_MAX;
-        std::array<int, DEPTH> moves(bestMoves);
-        moves[depth] = i;
-        exploreChildren(state.children[i], moves, score, depth + 1);
-        if (score > bestScore)
+        bestScore = INFINITY;
+        return;
+    }
+
+    if (state.score == -INFINITY)
+    {
+        bestScore = -INFINITY;
+        return;
+    }
+
+    if (color == agentColor) // Maximizing player
+    {
+        bestScore = -FLT_MAX;
+        for (int i = 0; i < state.children.size(); i++)
         {
-            bestMoves = moves;
-            bestScore = score;
+            float score = -FLT_MAX;
+            std::array<int, DEPTH> moves(bestMoves);
+            moves[depth] = i;
+            exploreChildren(state.children[i], moves, score, agentColor, color == yellow ? red : yellow, depth + 1);
+            if (score > bestScore)
+            {
+                bestMoves = moves;
+                bestScore = score;
+            }
         }
+    }
+    else // Minimizing player
+    {
+        float minScore = FLT_MAX;
+        for (int i = 0; i < state.children.size(); i++)
+        {
+            float score = FLT_MAX;
+            std::array<int, DEPTH> moves(bestMoves);
+            moves[depth] = i;
+            exploreChildren(state.children[i], moves, score, agentColor, color == yellow ? red : yellow, depth + 1);
+            if (score < minScore)
+            {
+                bestMoves = moves;
+                minScore = score;
+            }
+        }
+        bestScore = minScore; // Propagate the minScore to bestScore
     }
 }
 
@@ -93,20 +131,33 @@ move MiniMaxAgent::getMove(Board board)
     std::vector<BoardHashPair> states;
     states.push_back(state);
 
-    board.getChildren(color, states, state, DEPTH);
+    board.getChildren(color == red ? yellow : red, states, state, DEPTH);
+
+    // for (auto state : states)
+    // {
+    //     std::cout << state.board << std::endl;
+    //     std::cout << state.score << std::endl;
+    // }
 
     float bestScore = -FLT_MAX;
 
     // explore state.children
     std::array<int, DEPTH> moves = {0};
-    exploreChildren(state, moves, bestScore);
+    exploreChildren(state, moves, bestScore, color, color);
 
-    std::cout << "best score: " << bestScore << std::endl;
-    for (auto i : moves)
-    {
-        std::cout << i << " ";
-    }
-    std::cout << std::endl;
+    // std::cout << "best score: " << bestScore << std::endl;
+    // for (auto i : moves)
+    // {
+    //     std::cout << i << " ";
+    // }
+    // std::cout << std::endl;
+
+    // std::cout << "children" << std::endl;
+    // for (auto i : state.children)
+    // {
+    //     std::cout << i.board << std::endl;
+    //     std::cout << i.score << std::endl;
+    // }
 
     return moves[0];
 }

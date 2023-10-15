@@ -1,6 +1,5 @@
 #include <iostream>
-#include "board.hpp"
-#include "agent.hpp"
+#include "app.hpp"
 
 void playHorizontal(Board &board)
 {
@@ -56,19 +55,23 @@ void playDiagonalBR2TL(Board &board)
 
 int main(void)
 {
-    Board board;
+    App{}.mainLoop();
 
+    // Board board;
+    // board.play(red, 3);
+    // board.play(yellow, 3);
     // board.play(red, 1);
-    // board.play(red, 1);
-    // board.play(red, 1);
+    // board.play(yellow, 0);
+    // board.play(red, 2);
+    // // board.play(yellow, 0);
 
     // std::cout << board << std::endl;
-    // // evaluateResults rslt;
-    // // std::cout << "score: " << board.evaluate(red, rslt) << std::endl;
-    // // std::cout << rslt << std::endl;
+    // // std::cout << "eval: " << board.evaluate(yellow) << std::endl;
 
-    MiniMaxAgent agent(red);
+    // MiniMaxAgent agent = MiniMaxAgent{yellow};
+    // move mv = agent.getMove(board);
 
-    agent.getMove(board);
+    // std::cout << "move: " << mv << std::endl;
+
     return 0;
 }

@@ -152,6 +152,7 @@ std::ostream &operator<<(std::ostream &os, const Board &b)
     }
 
     os << "================\n";
+    os << " 0 1 2 3 4 5 6  \n";
 
     return os;
 }
@@ -164,7 +165,6 @@ void Board::getChildren(token color, std::vector<BoardHashPair> &states, BoardHa
     int movesCount = moves.size();
     for (int i = 0; i < movesCount; i++)
     {
-
         Board tmp(*this);
 
         tmp.play(color, moves[i]);
@@ -275,7 +275,7 @@ int Board::check3HorizontalPositive(int x, int y, token color) const
         return 3;
     }
 
-    return (count == 3) + (countValidEmpty >= 1);
+    return (count == 2) + (countValidEmpty >= 1 && count == 2);
 }
 
 int Board::check3HorizontalNegative(int x, int y, token color) const
@@ -325,7 +325,7 @@ int Board::check3HorizontalNegative(int x, int y, token color) const
         return 3;
     }
 
-    return (count == 3) + (countValidEmpty >= 1);
+    return (count == 2) + (countValidEmpty >= 1 && count == 2);
 }
 
 int Board::check3DiagonalPositive(int x, int y, token color) const
@@ -375,7 +375,7 @@ int Board::check3DiagonalPositive(int x, int y, token color) const
         return 3;
     }
 
-    return (count == 3) + (countValidEmpty >= 1);
+    return (count == 2) + (countValidEmpty >= 1 && count == 2);
 }
 
 int Board::check3DiagonalNegative(int x, int y, token color) const
@@ -425,7 +425,7 @@ int Board::check3DiagonalNegative(int x, int y, token color) const
         return 3;
     }
 
-    return (count == 2) + (countValidEmpty >= 1);
+    return (count == 2) + (countValidEmpty >= 1 && count == 2);
 }
 
 bool Board::check2Vertical(int x, int y, token color) const
@@ -625,6 +625,15 @@ int Board::check2DiagonalNegative(int x, int y, token color) const
 #define CENTRALITY_LOW 0
 float Board::evaluate(token color) const
 {
+    // check if the board is won
+    token victory = checkVictory();
+    if (victory != empty)
+    {
+        if (victory == color)
+            return VICTORY;
+        else
+            return -VICTORY;
+    }
     float score = 0;
     // test if there is a threat of 3 in a row with a free space on the left or right
     for (int x = 0; x < BOARD_SIZE_X; x++)
@@ -633,7 +642,7 @@ float Board::evaluate(token color) const
         {
             if (grid[x][y] != empty)
             {
-                int myColor = (grid[x][y] == color ? 1 : -1);
+                float myColor = (grid[x][y] == color ? 1.0f : -1.2f); // losing is worse than winning
                 token tileColor = grid[x][y];
                 // horizontal threat
                 if (x < BOARD_SIZE_X - 3)
@@ -797,4 +806,12 @@ float Board::evaluate(token color) const
     }
 
     return score;
+}
+
+bool Board::isFull() const
+{
+    for (int i = 0; i < BOARD_SIZE_X; ++i)
+        if (grid[i][BOARD_SIZE_Y - 1] == empty)
+            return false;
+    return true;
 }
